@@ -141,12 +141,23 @@ int get_rpi_info(rpi_info *info)
       fp = fopen("/proc/device-tree/system/linux,revision", "r");
       if (!fp)
       {
-        return -1;
+        // Let's try to read the /proc/device-tree/model from aarchOS
+        fp = fopen("/proc/device-tree/model", "r");
+        if (!fp){
+          return -1;
+        } else {
+          fread(revision, 1, 1024, fp);
+          if (strcmp(revision,"Raspberry Pi 3 Model B+"))
+            rpi_rev = 0xa020d3;
+          else
+            return -1;
+        }
+      } else {
+        fread(&rpi_rev, sizeof(uint32_t), 1, fp);
+        #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+          rpi_rev = bswap_32(rpi_rev);  // linux,revision appears to be in big endian
+        #endif
       }
-      fread(&rpi_rev, sizeof(uint32_t), 1, fp);
-      #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-        rpi_rev = bswap_32(rpi_rev);  // linux,revision appears to be in big endian
-      #endif
       
       if ((rpi_rev &  (1 << 23)) != 0)	// New way
       {
