@@ -137,7 +137,8 @@ int get_rpi_info(rpi_info *info)
       // 64bit processor -> new method
       uint32_t rpi_rev;
       int bRev, bType, bProc, bMfg, bMem, bWarranty ;
-      
+      char *model;
+  
       fp = fopen("/proc/device-tree/system/linux,revision", "r");
       if (!fp)
       {
@@ -146,8 +147,9 @@ int get_rpi_info(rpi_info *info)
         if (!fp){
           return -1;
         } else {
+          
           fread(revision, 1, 1024, fp);
-          if (strcmp(revision,"Raspberry Pi 3 Model B+"))
+          if (strstr(revision, "Raspberry Pi 3 Model B+")!= NULL)
             rpi_rev = 0xa020d3;
           else
             return -1;
