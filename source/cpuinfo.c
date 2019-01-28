@@ -137,7 +137,6 @@ int get_rpi_info(rpi_info *info)
       // 64bit processor -> new method
       uint32_t rpi_rev;
       int bRev, bType, bProc, bMfg, bMem, bWarranty ;
-      char *model;
   
       fp = fopen("/proc/device-tree/system/linux,revision", "r");
       if (!fp)
