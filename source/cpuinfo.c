@@ -36,43 +36,43 @@ SOFTWARE.
 
 const char *piModelNames [16] =
 {
-  "Model A",	//  0
-  "Model B",	//  1
-  "Model A+",	//  2
-  "Model B+",	//  3
-  "Pi 2",	//  4
-  "Alpha",	//  5
-  "CM",		//  6
-  "Unknown07",	// 07
-  "Pi 3",	// 08
-  "Pi Zero",	// 09
-  "CM3",	// 10
-  "Unknown11",	// 11
-  "Pi Zero-W",	// 12
-  "Pi 3+",	// 13
-  "Unknown14",	// 14
-  "Unknown15",	// 15
+  "Model A",	 //  0
+  "Model B",	 //  1
+  "Model A+",	 //  2
+  "Model B+",	 //  3
+  "Pi 2",   	 //  4
+  "Alpha",	   //  5
+  "CM",		     //  6
+  "Unknown07", //  7
+  "Pi Model 3 B",	     //  8
+  "Pi Zero",	 //  9
+  "CM3",	     // 10 A
+  "Unknown11", // 11 B
+  "Pi Zero-W", // 12 C
+  "Pi 3 Model B+",	   // 13 D
+  "Pi 3 Model A+", // 14 E
+  "Unknown15", // 15 F
 } ;
 
 // Changed to use the same that the original pl_revision
 const int piRevision [16] =
 {
-  2,  //	"Model A",	   0
-  2,  //	"Model B",	   1
-  3,  //	"Model A+",	   2
-  3,  // "Model B+",	   3
-  3,  //	"Pi 2",	      4
-  3,  // "Alpha",	      5
-  0,  // "CM",		      6
-  3,  // "Unknown07",  07
-  3,  // "Pi 3",	     08
-  3,  // "Pi Zero",	  09
-  3,  // "CM3",	     10
-  3,  // "Unknown11",  11
-  3,  // "Pi Zero-W",  12
-  3,  // "Pi 3+",	     13
-  3,  // "Unknown14",  14
-  3,  // "Unknown15",  15
+  2,  //	 0
+  2,  //	 1
+  3,  //	 2
+  3,  //   3
+  3,  //	 4
+  3,  //   5
+  3,  //   6
+  3,  //  07
+  3,  //  08
+  3,  //  09
+  3,  //  10
+  3,  //  11
+  3,  //  12
+  3,  //  13
+  3,  //  14
+  3,  //  15
 } ;
 
 const char *piMakerNames [16] =
@@ -148,10 +148,13 @@ int get_rpi_info(rpi_info *info)
         } else {
           
           fread(revision, 1, 1024, fp);
-          if (strstr(revision, "Raspberry Pi 3 Model B+")!= NULL)
+          if (strstr(revision, "Raspberry Pi 3 Model B+")!= NULL){
             rpi_rev = 0xa020d3;
-          else
+          } else if (strstr(revision, "Raspberry Pi 3 Model B")!= NULL){
+            rpi_rev = 0xa02582;
+          } else {
             return -1;
+          }
         }
       } else {
         fread(&rpi_rev, sizeof(uint32_t), 1, fp);
@@ -171,7 +174,7 @@ int get_rpi_info(rpi_info *info)
          
          sprintf(revision,"%x",rpi_rev);
          
-         info->p1_revision  = piRevision[bRev];
+         info->p1_revision  = piRevision[bType];
          info->ram          = piMemorySize[bMem];
          info->manufacturer = piMakerNames[bMfg];
          info->processor    = piProcesorNames[bProc];
